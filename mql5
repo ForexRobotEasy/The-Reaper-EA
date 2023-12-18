@@ -1,0 +1,106 @@
+mql5
+//+------------------------------------------------------------------+
+//|                                The Reaper EA                     |
+//|                    Developer: Forex Robot Easy Team               |
+//|                         Website: forexroboteasy.com               |
+//+------------------------------------------------------------------+
+
+// Define input parameters
+input double RiskPercentage = 1.0; // Risk percentage per trade
+input double EquityPercentage = 10.0; // Percentage of equity to use for position sizing
+input double MaxExposure = 0.2; // Maximum exposure to correlated pairs
+input double StopLossPips = 30.0; // Stop loss in pips
+input double TakeProfitPips = 60.0; // Take profit in pips
+input double TrailStopPips = 20.0; // Trailing stop distance in pips
+input bool EnableNewsFilter = true; // Enable news filter
+input bool EnablePerformanceMonitor = true; // Enable performance monitor
+input bool EnableCorrelationFilter = true; // Enable correlation filter
+
+//+------------------------------------------------------------------+
+//|                             OnTick Function                      |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+    // Check if it's nighttime
+    if (IsNightTime())
+    {
+        // Check if high-impact news is enabled and if there are any upcoming news events
+        if (EnableNewsFilter && IsNewsEvent())
+        {
+            // Avoid trading during high-impact news events
+            return;
+        }
+        
+        // Get a list of currency pairs to trade
+        string[] currencyPairs = GetCurrencyPairs();
+        
+        // Loop through each currency pair
+        for (int i = 0; i < ArraySize(currencyPairs); i++)
+        {
+            // Check if individual performance monitor is enabled
+            if (EnablePerformanceMonitor && !IsPairPerforming(currencyPairs[i]))
+            {
+                // Adjust risk based on each pair's performance
+                continue;
+            }
+            
+            // Check if correlation filter is enabled
+            if (EnableCorrelationFilter && IsExcessiveCorrelation(currencyPairs[i]))
+            {
+                // Prevent excessive exposure to correlated pairs
+                continue;
+            }
+            
+            // Calculate position size based on account equity and risk tolerance
+            double positionSize = CalculatePositionSize(currencyPairs[i]);
+            
+            // Place a trade with the calculated position size, stop loss, and take profit
+            PlaceTrade(currencyPairs[i], positionSize, StopLossPips, TakeProfitPips);
+        }
+    }
+}
+
+//+------------------------------------------------------------------+
+//|                          Helper Functions                        |
+//+------------------------------------------------------------------+
+bool IsNightTime()
+{
+    // Add logic to determine if it's nighttime based on your trading strategy
+    return false;
+}
+
+bool IsNewsEvent()
+{
+    // Add logic to check if there are any upcoming high-impact news events
+    return false;
+}
+
+string[] GetCurrencyPairs()
+{
+    // Add logic to get the list of currency pairs to trade
+    return new string[] { 'EURUSD', 'GBPUSD', 'USDJPY' };
+}
+
+bool IsPairPerforming(string currencyPair)
+{
+    // Add logic to check if the pair's performance meets your criteria
+    return true;
+}
+
+bool IsExcessiveCorrelation(string currencyPair)
+{
+    // Add logic to check if there is excessive correlation between currency pairs
+    return false;
+}
+
+double CalculatePositionSize(string currencyPair)
+{
+    // Add logic to calculate the position size based on account equity and risk tolerance
+    return 0.01;
+}
+
+void PlaceTrade(string currencyPair, double positionSize, double stopLossPips, double takeProfitPips)
+{
+    // Add logic to place a trade with the given parameters
+}
+
